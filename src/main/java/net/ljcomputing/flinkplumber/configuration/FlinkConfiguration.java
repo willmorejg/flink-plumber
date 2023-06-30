@@ -44,7 +44,7 @@ public class FlinkConfiguration {
     public JdbcExecutionOptions jdbcExecutionOptions() {
         return JdbcExecutionOptions.builder()
                 .withBatchIntervalMs(
-                        200) // optional: default = 0, meaning no time-based execution is done
+                        6000) // optional: default = 0, meaning no time-based execution is done
                 .withBatchSize(1000) // optional: default = 5000 values
                 .withMaxRetries(5) // optional: default = 3
                 .build();

@@ -23,7 +23,9 @@ package net.ljcomputing.flinkplumber.filter;
 import lombok.extern.slf4j.Slf4j;
 import net.ljcomputing.flinkplumber.model.Person;
 import org.apache.flink.api.common.functions.FilterFunction;
+import org.springframework.stereotype.Component;
 
+@Component
 @Slf4j
 public class WillmoreFilter implements FilterFunction<Person> {
 

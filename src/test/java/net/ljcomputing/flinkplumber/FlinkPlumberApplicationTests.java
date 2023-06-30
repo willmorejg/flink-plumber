@@ -24,9 +24,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import net.ljcomputing.flinkplumber.filter.WillmoreFilter;
 import net.ljcomputing.flinkplumber.model.Person;
-import org.apache.flink.connector.jdbc.JdbcConnectionOptions;
-import org.apache.flink.connector.jdbc.JdbcExecutionOptions;
-import org.apache.flink.connector.jdbc.JdbcSink;
+import net.ljcomputing.flinkplumber.sink.PGInsertWillmores;
 import org.apache.flink.streaming.api.datastream.DataStream;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
 import org.apache.flink.table.api.Table;
@@ -65,9 +63,9 @@ class FlinkPlumberApplicationTests {
 
     @Autowired private StreamTableEnvironment streamTableEnvironment;
 
-    @Autowired private JdbcExecutionOptions jdbcExecutionOptions;
+    @Autowired private WillmoreFilter willmoreFilter;
 
-    @Autowired private JdbcConnectionOptions postgresConnectionOptions;
+    @Autowired private PGInsertWillmores pgInsertWillmores;
 
     @Test
     @Order(1)
@@ -79,10 +77,22 @@ class FlinkPlumberApplicationTests {
     @Test
     @Order(10)
     void testModel() {
-        final Person person1 = new Person("Jim", "", "Willmore", "");
-        final Person person2 = new Person("Andy", "", "Smith", "");
+        final DataStream<Person> people =
+                streamExecutionEnvironment.fromElements(
+                        new Person("Jim", "", "Willmore", "1"),
+                        new Person("Andy", "", "Smith", ""),
+                        new Person("Jim", "", "Willmore", "2"),
+                        new Person("Andy", "", "Smith", ""),
+                        new Person("Jim", "", "Willmore", "3"),
+                        new Person("Andy", "", "Smith", ""),
+                        new Person("Jim", "", "Willmore", "4"),
+                        new Person("Andy", "", "Smith", ""),
+                        new Person("Jim", "", "Willmore", "5"),
+                        new Person("Andy", "", "Smith", ""),
+                        new Person("Jim", "", "Willmore", "6"),
+                        new Person("Andy", "", "Smith", ""),
+                        new Person("John", "", "Willmore", ""));
 
-        final DataStream<Person> people = streamExecutionEnvironment.fromElements(person1, person2);
         final Table peopleTable = streamTableEnvironment.fromDataStream(people);
         streamTableEnvironment.createTemporaryView("PeopleView", peopleTable);
 
@@ -93,20 +103,8 @@ class FlinkPlumberApplicationTests {
 
         resultsDs.print();
 
-        people.filter(new WillmoreFilter())
-                .addSink(
-                        JdbcSink.sink(
-                                "INSERT INTO willmores (given_name, middle_name, surname, suffix)"
-                                        + " VALUES (?,?,?,?)",
-                                (statement, row) -> {
-                                    int idx = 1;
-                                    statement.setObject(idx++, row.getGivenName());
-                                    statement.setObject(idx++, row.getMiddleName());
-                                    statement.setObject(idx++, row.getSurname());
-                                    statement.setObject(idx++, row.getSuffix());
-                                },
-                                jdbcExecutionOptions,
-                                postgresConnectionOptions));
+        // appears that setting parallelism to '1' will allow the sink to batch process the rows
+        people.filter(willmoreFilter).addSink(pgInsertWillmores).setParallelism(1);
 
         try {
             streamExecutionEnvironment.execute();
