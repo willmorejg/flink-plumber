@@ -44,7 +44,9 @@ repositories {
 
 dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter'
-    // implementation "org.apache.flink:flink-java:${flinkVersion}"
+    implementation 'org.springframework.boot:spring-boot-starter-validation'
+	implementation 'org.springframework.boot:spring-boot-starter-data-jdbc'
+    implementation "org.apache.flink:flink-java:${flinkVersion}"
     implementation "org.apache.flink:flink-streaming-java:${flinkVersion}"
     implementation "org.apache.flink:flink-clients:${flinkVersion}"
     implementation "org.apache.flink:flink-connector-files:${flinkVersion}"
@@ -54,11 +56,14 @@ dependencies {
     implementation "org.apache.flink:flink-table-planner-loader:${flinkVersion}"
     implementation "org.apache.flink:flink-table-runtime:${flinkVersion}"
     implementation "org.apache.flink:flink-sql-parser:${flinkVersion}"
+    implementation "org.apache.flink:flink-csv:${flinkVersion}"
+    implementation "org.apache.flink:flink-json:${flinkVersion}"
     implementation "org.apache.flink:flink-connector-jdbc:3.1.1-1.17"
 
 	compileOnly 'org.projectlombok:lombok'
 
     runtimeOnly 'org.postgresql:postgresql'
+    runtimeOnly 'org.mariadb.jdbc:mariadb-java-client'
 
 	annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
 	annotationProcessor 'org.projectlombok:lombok'
