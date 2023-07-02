@@ -103,6 +103,13 @@ The unit tests use <a href="https://www.postgresql.org/">PostgreSQL</a> and <a h
    ```sh
    ./gradlew build
    ```
+The project uses the following <a href="https://gradle.org/">Gradle</a> plugins:
+
+- <a href="https://docs.gradle.org/current/userguide/build_dashboard_plugin.html">Build Dashboard</a>
+- <a href="https://docs.gradle.org/current/userguide/jacoco_plugin.html">JaCoCo</a>
+- <a href="https://docs.gradle.org/current/userguide/project_report_plugin.html">Project Report</a>
+- <a href="https://github.com/diffplug/spotless">Spotless</a>
+- <a href="https://gitlab.com/ysb33rOrg/doxygen-gradle-plugin">Doxygen</a>
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
