@@ -20,9 +20,9 @@ James G Willmore - LJ Computing - (C) 2023
 */
 package net.ljcomputing.flinkplumber.filter;
 
+import net.ljcomputing.flinkplumber.model.Person;
 import org.apache.flink.api.common.functions.FilterFunction;
 import org.springframework.stereotype.Component;
-import net.ljcomputing.flinkplumber.model.Person;
 
 @Component
 public class WillmoreFilter implements FilterFunction<Person> {
