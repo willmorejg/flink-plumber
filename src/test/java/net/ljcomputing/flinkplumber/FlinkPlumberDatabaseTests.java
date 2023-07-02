@@ -102,7 +102,7 @@ class FlinkPlumberDatabaseTests {
 
         /* Create a view from a stream. */
         final Table peopleTable = streamTableEnvironment.fromDataStream(people);
-        streamTableEnvironment.createTemporaryView("PeopleView", peopleTable);
+        streamTableEnvironment.createTemporaryView("PeopleView2", peopleTable);
 
         /* Create a table using SQL to select records from a view. */
         final Table resultTable =
