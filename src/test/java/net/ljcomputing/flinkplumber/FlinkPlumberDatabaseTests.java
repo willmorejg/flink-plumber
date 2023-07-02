@@ -20,23 +20,20 @@ James G Willmore - LJ Computing - (C) 2023
 */
 package net.ljcomputing.flinkplumber;
 
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import net.ljcomputing.flinkplumber.configuration.DataSourceMariaDBWillmoresProperties;
-import net.ljcomputing.flinkplumber.configuration.DataSourcePgInsuranceProperties;
-import net.ljcomputing.flinkplumber.filter.AddBirthdateFunction;
-import net.ljcomputing.flinkplumber.filter.WillmoreFilter;
 import net.ljcomputing.flinkplumber.model.Person;
+import net.ljcomputing.flinkplumber.sink.MariaDBInsertWillmores;
+import net.ljcomputing.flinkplumber.sink.MariaDBInsertWillmoresRows;
+import net.ljcomputing.flinkplumber.sink.PGInsertWillmores;
 import org.apache.flink.streaming.api.datastream.DataStream;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
+import org.apache.flink.table.api.Table;
 import org.apache.flink.table.api.bridge.java.StreamTableEnvironment;
 import org.junit.jupiter.api.MethodOrderer.OrderAnnotation;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
@@ -44,20 +41,16 @@ import org.springframework.test.context.ActiveProfiles;
 @SpringBootTest
 @TestMethodOrder(OrderAnnotation.class)
 @ActiveProfiles("test")
-class FlinkPlumberApplicationTests {
-    private static final Logger log = LoggerFactory.getLogger(FlinkPlumberApplicationTests.class);
-
-    @Autowired DataSourcePgInsuranceProperties pgInsuranceProperties;
-
-    @Autowired DataSourceMariaDBWillmoresProperties mariaDBWillmoresProperties;
-
+class FlinkPlumberDatabaseTests {
     @Autowired private StreamExecutionEnvironment streamExecutionEnvironment;
 
     @Autowired private StreamTableEnvironment streamTableEnvironment;
 
-    @Autowired private WillmoreFilter willmoreFilter;
+    @Autowired private PGInsertWillmores pgInsertWillmores;
 
-    @Autowired private AddBirthdateFunction addBirthdateFunction;
+    @Autowired private MariaDBInsertWillmores mariadbInsertWillmores;
+
+    @Autowired private MariaDBInsertWillmoresRows mariadbInsertWillmoresRows;
 
     /**
      * People test data stream.
@@ -81,23 +74,15 @@ class FlinkPlumberApplicationTests {
                 new Person("John", "", "Willmore", "", null, null));
     }
 
-    /** Test autowiring beans and other application specific resources. */
+    /** Test stream to 2 data source. */
     @Test
     @Order(1)
-    void contextLoads() {
-        assertNotNull(streamExecutionEnvironment);
-        assertNotNull(streamTableEnvironment);
-        assertNotNull(pgInsuranceProperties);
-        assertNotNull(mariaDBWillmoresProperties);
-    }
-
-    /** Test custom filters. */
-    @Test
-    @Order(10)
-    void testFilters() {
+    void testElementsToMariaDS() {
         final DataStream<Person> people = people();
 
-        people.filter(willmoreFilter).print();
+        // appears that setting parallelism to '1' will allow the sink to batch process the rows
+        people.addSink(mariadbInsertWillmores).setParallelism(1);
+        people.addSink(pgInsertWillmores).setParallelism(1);
 
         try {
             streamExecutionEnvironment.execute();
@@ -108,15 +93,31 @@ class FlinkPlumberApplicationTests {
         }
     }
 
-    /** Test of a function that sets a random birthdate and age to the data stream. */
+    /** Test using a select statement to filter a view, which enriches the initial data stream. */
     @Test
-    @Order(13)
-    void test() {
+    @Order(2)
+    void testElementsToViewToDS() {
+        final DataStream<Person> people = people();
+
+        /* Create a view from a stream. */
+        final Table peopleTable = streamTableEnvironment.fromDataStream(people);
+        streamTableEnvironment.createTemporaryView("PeopleView", peopleTable);
+
+        /* Create a table using SQL to select records from a view. */
+        final Table resultTable =
+                streamTableEnvironment.sqlQuery(
+                        "SELECT givenName, middleName, surname, suffix,"
+                                + " TO_TIMESTAMP_LTZ(RAND()*985000000, 0) as birthdate,"
+                                + " CAST(0 AS INT) as age"
+                                + " FROM PeopleView WHERE UPPER(surname)='WILLMORE'");
+
+        /* Persist the selecting from the view to a data source. */
+        streamTableEnvironment
+                .toDataStream(resultTable)
+                .addSink(mariadbInsertWillmoresRows)
+                .setParallelism(1);
+
         try {
-            final DataStream<Person> people = people();
-
-            people.map(addBirthdateFunction).print();
-
             streamExecutionEnvironment.execute();
             assertTrue(true);
         } catch (Exception e) {
@@ -124,16 +125,4 @@ class FlinkPlumberApplicationTests {
             assertTrue(false);
         }
     }
-
-    // @Test
-    // @Order(13)
-    // void test() {
-    //     try {
-    //         streamExecutionEnvironment.execute();
-    //         assertTrue(true);
-    //     } catch (Exception e) {
-    //         e.printStackTrace();
-    //         assertTrue(false);
-    //     }
-    // }
 }
