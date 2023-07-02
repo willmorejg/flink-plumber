@@ -18,30 +18,25 @@ under the License.
 
 James G Willmore - LJ Computing - (C) 2023
 */
-package net.ljcomputing.flinkplumber.model;
+package net.ljcomputing.flinkplumber.filter;
 
-import java.io.Serializable;
 import java.util.Date;
-import lombok.AllArgsConstructor;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import lombok.ToString;
+import net.ljcomputing.flinkplumber.model.Person;
+import net.ljcomputing.flinkplumber.utils.DateUtils;
+import org.apache.flink.api.common.functions.MapFunction;
+import org.springframework.stereotype.Component;
 
-@Getter
-@Setter
-@EqualsAndHashCode
-@ToString
-@NoArgsConstructor
-@AllArgsConstructor
-public class Person implements Serializable {
-    private static final long serialVersionUID = -7852311289054346703L;
+@Component
+public class AddBirthdateFunction implements MapFunction<Person, Person> {
 
-    private String givenName;
-    private String middleName;
-    private String surname;
-    private String suffix;
-    private Date birthdate;
-    private Integer age;
+    @Override
+    public Person map(final Person value) throws Exception {
+        final Date birthdate = DateUtils.randomDate();
+        value.setBirthdate(birthdate);
+
+        final int age = DateUtils.calculateAge(value.getBirthdate());
+        value.setAge(age);
+
+        return value;
+    }
 }
