@@ -1,0 +1,14 @@
+application:
+    datasource:
+        pg:
+            insurance:
+                url: jdbc:postgresql://localhost:5432/insurance
+                driver-name: org.postgresql.Driver
+                username: jim
+                password: password
+        mariadb:
+            willmores:
+                url: jdbc:mariadb://localhost:3306/willmores
+                driver-name: org.mariadb.jdbc.Driver
+                username: jim
+                password: password

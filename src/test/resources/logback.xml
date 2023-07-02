@@ -36,6 +36,7 @@
     <logger name="org.hibernate" level="ERROR"/>
     <logger name="com.zaxxer.hikari" level="OFF" />
     <logger name="org.apache" level="WARN" />
+    <logger name="org.mariadb.jdbc" level="WARN" />
     <logger name="net.ljcomputing" level="DEBUG" />
 
     <root>

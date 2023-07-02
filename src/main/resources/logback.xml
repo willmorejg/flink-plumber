@@ -35,7 +35,7 @@
     <logger name="org.springframework" level="ERROR" />
     <logger name="org.hibernate" level="ERROR"/>
     <logger name="com.zaxxer.hikari" level="OFF" />
-    <logger name="org.apache.camel" level="ERROR" />
+    <logger name="org.apache" level="ERROR" />
     <logger name="net.ljcomputing" level="INFO" />
 
     <root>
