@@ -22,15 +22,19 @@ package net.ljcomputing.flinkplumber;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-
-import net.ljcomputing.flinkplumber.configuration.DataSourceMariaDBWillmoresProperties;
-import net.ljcomputing.flinkplumber.configuration.DataSourcePgInsuranceProperties;
-import net.ljcomputing.flinkplumber.filter.AddBirthdateFunction;
-import net.ljcomputing.flinkplumber.filter.WillmoreFilter;
-import net.ljcomputing.flinkplumber.model.Person;
+import org.apache.flink.api.common.eventtime.WatermarkStrategy;
+import org.apache.flink.api.common.typeinfo.TypeInformation;
+import org.apache.flink.connector.file.src.FileSource;
+import org.apache.flink.core.fs.Path;
+import org.apache.flink.formats.csv.CsvReaderFormat;
+import org.apache.flink.shaded.jackson2.com.fasterxml.jackson.dataformat.csv.CsvMapper;
+import org.apache.flink.shaded.jackson2.com.fasterxml.jackson.dataformat.csv.CsvSchema;
 import org.apache.flink.streaming.api.datastream.DataStream;
+import org.apache.flink.streaming.api.datastream.DataStreamSource;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
+import org.apache.flink.table.api.Table;
 import org.apache.flink.table.api.bridge.java.StreamTableEnvironment;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.MethodOrderer.OrderAnnotation;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
@@ -40,6 +44,11 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
+import net.ljcomputing.flinkplumber.configuration.DataSourceMariaDBWillmoresProperties;
+import net.ljcomputing.flinkplumber.configuration.DataSourcePgInsuranceProperties;
+import net.ljcomputing.flinkplumber.filter.AddBirthdateFunction;
+import net.ljcomputing.flinkplumber.filter.WillmoreFilter;
+import net.ljcomputing.flinkplumber.model.Person;
 
 @SpringBootTest
 @Order(1)
@@ -103,7 +112,7 @@ class FlinkPlumberApplicationTests {
         try {
             streamExecutionEnvironment.execute();
             assertTrue(true);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             e.printStackTrace();
             assertTrue(false);
         }
@@ -112,7 +121,7 @@ class FlinkPlumberApplicationTests {
     /** Test of a function that sets a random birthdate and age to the data stream. */
     @Test
     @Order(13)
-    void test() {
+    void testMapFunction() {
         try {
             final DataStream<Person> people = people();
 
@@ -120,7 +129,48 @@ class FlinkPlumberApplicationTests {
 
             streamExecutionEnvironment.execute();
             assertTrue(true);
-        } catch (Exception e) {
+        } catch (final Exception e) {
+            e.printStackTrace();
+            assertTrue(false);
+        }
+    }
+
+    @Test
+    @Order(14)
+    void test() {
+        try {
+            final Path inputFolder =
+                    new Path(
+                            "file:///home/jim/eclipse-workspace/net.ljcomputing/flink-plumber/src/test/resources/data/test.csv");
+            final CsvMapper mapper = new CsvMapper();
+            final CsvSchema schema =
+                    mapper.schemaFor(Person.class)
+                            .withColumnSeparator(',')
+                            .withUseHeader(true)
+                            .withColumnReordering(true)
+                            .withStrictHeaders(false);
+            final CsvReaderFormat<Person> csvFormat =
+                    CsvReaderFormat.forSchema(schema, TypeInformation.of(Person.class));
+            final FileSource<Person> csvSource =
+                    FileSource.forRecordStreamFormat(csvFormat, inputFolder).build();
+            final DataStreamSource<Person> file =
+                    streamExecutionEnvironment.fromSource(
+                            csvSource, WatermarkStrategy.noWatermarks(), "test-csv-file");
+
+            file.print();
+
+            final Table peopleTable = streamTableEnvironment.fromDataStream(file);
+            streamTableEnvironment.createTemporaryView("PeopleView", peopleTable);
+
+            final Table resultTable =
+                    streamTableEnvironment.sqlQuery(
+                            "SELECT givenName, middleName, surname, suffix FROM PeopleView");
+
+            streamTableEnvironment.toDataStream(resultTable).print();
+
+            streamExecutionEnvironment.execute();
+            assertTrue(true);
+        } catch (final Exception e) {
             e.printStackTrace();
             assertTrue(false);
         }
