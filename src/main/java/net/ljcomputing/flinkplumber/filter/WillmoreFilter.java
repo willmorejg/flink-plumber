@@ -24,9 +24,11 @@ import net.ljcomputing.flinkplumber.model.Person;
 import org.apache.flink.api.common.functions.FilterFunction;
 import org.springframework.stereotype.Component;
 
+/** Filter stream by surname that equals 'Willmore'. */
 @Component
 public class WillmoreFilter implements FilterFunction<Person> {
 
+    /** {@inheritDoc} */
     @Override
     public boolean filter(Person value) throws Exception {
         final String comparison =

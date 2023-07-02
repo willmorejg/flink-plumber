@@ -26,9 +26,11 @@ import net.ljcomputing.flinkplumber.utils.DateUtils;
 import org.apache.flink.api.common.functions.MapFunction;
 import org.springframework.stereotype.Component;
 
+/** Add birthdate map function. Will add random birthdate and calculate age from the random birthdate. */
 @Component
 public class AddBirthdateFunction implements MapFunction<Person, Person> {
 
+    /** {@inheritDoc} */
     @Override
     public Person map(final Person value) throws Exception {
         final Date birthdate = DateUtils.randomDate();
