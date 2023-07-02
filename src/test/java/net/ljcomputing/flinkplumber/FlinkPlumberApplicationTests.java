@@ -22,6 +22,14 @@ package net.ljcomputing.flinkplumber;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import net.ljcomputing.flinkplumber.configuration.DataSourceMariaDBWillmoresProperties;
+import net.ljcomputing.flinkplumber.configuration.DataSourcePgInsuranceProperties;
+import net.ljcomputing.flinkplumber.filter.WillmoreFilter;
+import net.ljcomputing.flinkplumber.model.Person;
+import net.ljcomputing.flinkplumber.sink.MariaDBInsertWillmores;
+import net.ljcomputing.flinkplumber.sink.MariaDBInsertWillmoresRows;
+import net.ljcomputing.flinkplumber.sink.PGInsertWillmores;
 import org.apache.flink.streaming.api.datastream.DataStream;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
 import org.apache.flink.table.api.Table;
@@ -35,13 +43,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
-import net.ljcomputing.flinkplumber.configuration.DataSourceMariaDBWillmoresProperties;
-import net.ljcomputing.flinkplumber.configuration.DataSourcePgInsuranceProperties;
-import net.ljcomputing.flinkplumber.filter.WillmoreFilter;
-import net.ljcomputing.flinkplumber.model.Person;
-import net.ljcomputing.flinkplumber.sink.MariaDBInsertWillmores;
-import net.ljcomputing.flinkplumber.sink.MariaDBInsertWillmoresRows;
-import net.ljcomputing.flinkplumber.sink.PGInsertWillmores;
 
 @SpringBootTest
 @TestMethodOrder(OrderAnnotation.class)
