@@ -31,6 +31,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import lombok.extern.slf4j.Slf4j;
 
+/** Sink function to insert rows into willmores_fullname table. */
 @Component
 @Slf4j
 public class MariaDBInsertWillmoresRows extends RichSinkFunction<Row> {
@@ -42,6 +43,7 @@ public class MariaDBInsertWillmoresRows extends RichSinkFunction<Row> {
 
     @Autowired private JdbcConnectionOptions mariadbConnectionOptions;
 
+    /** {@inheritDoc} */
     @Override
     public void close() throws Exception {
         log.debug("closing ...");
@@ -50,6 +52,7 @@ public class MariaDBInsertWillmoresRows extends RichSinkFunction<Row> {
         super.close();
     }
 
+    /** {@inheritDoc} */
     @Override
     public void open(final Configuration parameters) throws Exception {
         super.open(parameters);
@@ -64,6 +67,7 @@ public class MariaDBInsertWillmoresRows extends RichSinkFunction<Row> {
         statement = connection.prepareStatement(sql);
     }
 
+    /** {@inheritDoc} */
     @Override
     public void invoke(Row value, Context context) throws Exception {
         log.debug("writing value: {}", value);

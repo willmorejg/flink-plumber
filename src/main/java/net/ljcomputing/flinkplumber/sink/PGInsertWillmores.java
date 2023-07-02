@@ -31,6 +31,7 @@ import org.springframework.stereotype.Component;
 import lombok.extern.slf4j.Slf4j;
 import net.ljcomputing.flinkplumber.model.Person;
 
+/** Sink function to insert values into willmores table. */
 @Component
 @Slf4j
 public class PGInsertWillmores extends RichSinkFunction<Person> {
@@ -43,6 +44,7 @@ public class PGInsertWillmores extends RichSinkFunction<Person> {
 
     @Autowired private JdbcConnectionOptions postgresConnectionOptions;
 
+    /** {@inheritDoc} */
     @Override
     public void close() throws Exception {
         log.debug("closing ...");
@@ -51,6 +53,7 @@ public class PGInsertWillmores extends RichSinkFunction<Person> {
         super.close();
     }
 
+    /** {@inheritDoc} */
     @Override
     public void open(final Configuration parameters) throws Exception {
         super.open(parameters);
@@ -61,6 +64,7 @@ public class PGInsertWillmores extends RichSinkFunction<Person> {
         statement = connection.prepareStatement(sql);
     }
 
+    /** {@inheritDoc} */
     @Override
     public void invoke(Person value, Context context) throws Exception {
         log.debug("writing value: {}", value);
