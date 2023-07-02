@@ -18,18 +18,14 @@ under the License.
 
 James G Willmore - LJ Computing - (C) 2023
 */
-package net.ljcomputing.flinkplumber;
+package net.ljcomputing.flinkplumber.configuration;
 
-import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
-import org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfiguration;
+import lombok.Data;
 
-@SpringBootApplication(
-        exclude = {DataSourceAutoConfiguration.class, HibernateJpaAutoConfiguration.class})
-public class FlinkPlumberApplication {
-
-    public static void main(String[] args) {
-        SpringApplication.run(FlinkPlumberApplication.class, args);
-    }
+@Data
+public abstract class DataSourcePropertiesBase {
+    protected String url;
+    protected String driverName;
+    protected String username;
+    protected String password;
 }
