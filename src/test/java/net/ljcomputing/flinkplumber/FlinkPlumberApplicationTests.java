@@ -21,15 +21,11 @@ James G Willmore - LJ Computing - (C) 2023
 package net.ljcomputing.flinkplumber;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-
-import net.ljcomputing.flinkplumber.filter.WillmoreFilter;
-import net.ljcomputing.flinkplumber.model.Person;
-import net.ljcomputing.flinkplumber.sink.PGInsertWillmores;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.apache.flink.streaming.api.datastream.DataStream;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
 import org.apache.flink.table.api.Table;
 import org.apache.flink.table.api.bridge.java.StreamTableEnvironment;
-import org.apache.flink.types.Row;
 import org.junit.jupiter.api.MethodOrderer.OrderAnnotation;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
@@ -38,9 +34,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.context.TestConfiguration;
-import org.springframework.context.annotation.Bean;
 import org.springframework.test.context.ActiveProfiles;
+import net.ljcomputing.flinkplumber.configuration.DataSourceMariaDBWillmoresProperties;
+import net.ljcomputing.flinkplumber.configuration.DataSourcePgInsuranceProperties;
+import net.ljcomputing.flinkplumber.filter.WillmoreFilter;
+import net.ljcomputing.flinkplumber.model.Person;
+import net.ljcomputing.flinkplumber.sink.MariaDBInsertWillmores;
+import net.ljcomputing.flinkplumber.sink.MariaDBInsertWillmoresRows;
+import net.ljcomputing.flinkplumber.sink.PGInsertWillmores;
 
 @SpringBootTest
 @TestMethodOrder(OrderAnnotation.class)
@@ -48,16 +49,9 @@ import org.springframework.test.context.ActiveProfiles;
 class FlinkPlumberApplicationTests {
     private static final Logger log = LoggerFactory.getLogger(FlinkPlumberApplicationTests.class);
 
-    @TestConfiguration
-    static class FlinkStreamingSpringBootTestPropertiesConfiguration {
+    @Autowired DataSourcePgInsuranceProperties pgInsuranceProperties;
 
-        @Bean
-        String outputFileName() {
-            return "src/test/logs/willmores.txt";
-        }
-    }
-
-    @Autowired private String outputFileName;
+    @Autowired DataSourceMariaDBWillmoresProperties mariaDBWillmoresProperties;
 
     @Autowired private StreamExecutionEnvironment streamExecutionEnvironment;
 
@@ -67,49 +61,107 @@ class FlinkPlumberApplicationTests {
 
     @Autowired private PGInsertWillmores pgInsertWillmores;
 
+    @Autowired private MariaDBInsertWillmores mariadbInsertWillmores;
+
+    @Autowired private MariaDBInsertWillmoresRows mariadbInsertWillmoresRows;
+
+    /**
+     * People test data stream.
+     *
+     * @return
+     */
+    private DataStream<Person> people() {
+        return streamExecutionEnvironment.fromElements(
+                new Person("Jim", "", "Willmore", "1"),
+                new Person("Andy", "", "Smith", ""),
+                new Person("Jim", "", "Willmore", "2"),
+                new Person("Andy", "", "Smith", ""),
+                new Person("Jim", "", "Willmore", "3"),
+                new Person("Andy", "", "Smith", ""),
+                new Person("Jim", "", "Willmore", "4"),
+                new Person("Andy", "", "Smith", ""),
+                new Person("Jim", "", "Willmore", "5"),
+                new Person("Andy", "", "Smith", ""),
+                new Person("Jim", "", "Willmore", "6"),
+                new Person("Andy", "", "Smith", ""),
+                new Person("John", "", "Willmore", ""));
+    }
+
+    /** Test autowiring beans and other application specific resources. */
     @Test
     @Order(1)
     void contextLoads() {
         assertNotNull(streamExecutionEnvironment);
         assertNotNull(streamTableEnvironment);
+        assertNotNull(pgInsuranceProperties);
+        assertNotNull(mariaDBWillmoresProperties);
     }
 
+    /** Test custom filters. */
     @Test
     @Order(10)
-    void testModel() {
-        final DataStream<Person> people =
-                streamExecutionEnvironment.fromElements(
-                        new Person("Jim", "", "Willmore", "1"),
-                        new Person("Andy", "", "Smith", ""),
-                        new Person("Jim", "", "Willmore", "2"),
-                        new Person("Andy", "", "Smith", ""),
-                        new Person("Jim", "", "Willmore", "3"),
-                        new Person("Andy", "", "Smith", ""),
-                        new Person("Jim", "", "Willmore", "4"),
-                        new Person("Andy", "", "Smith", ""),
-                        new Person("Jim", "", "Willmore", "5"),
-                        new Person("Andy", "", "Smith", ""),
-                        new Person("Jim", "", "Willmore", "6"),
-                        new Person("Andy", "", "Smith", ""),
-                        new Person("John", "", "Willmore", ""));
+    void testFilters() {
+        final DataStream<Person> people = people();
 
-        final Table peopleTable = streamTableEnvironment.fromDataStream(people);
-        streamTableEnvironment.createTemporaryView("PeopleView", peopleTable);
-
-        final Table resultTable =
-                streamTableEnvironment.sqlQuery(
-                        "SELECT * FROM PeopleView WHERE surname='Willmore'");
-        final DataStream<Row> resultsDs = streamTableEnvironment.toDataStream(resultTable);
-
-        resultsDs.print();
-
-        // appears that setting parallelism to '1' will allow the sink to batch process the rows
-        people.filter(willmoreFilter).addSink(pgInsertWillmores).setParallelism(1);
+        people.filter(willmoreFilter).print();
 
         try {
             streamExecutionEnvironment.execute();
+            assertTrue(true);
         } catch (Exception e) {
             e.printStackTrace();
+            assertTrue(false);
+        }
+    }
+
+    /** Test stream to 2 data source. */
+    @Test
+    @Order(11)
+    void testElementsToMariaDS() {
+        final DataStream<Person> people = people();
+
+        // appears that setting parallelism to '1' will allow the sink to batch process the rows
+        people.addSink(mariadbInsertWillmores).setParallelism(1);
+        people.addSink(pgInsertWillmores).setParallelism(1);
+
+        try {
+            streamExecutionEnvironment.execute();
+            assertTrue(true);
+        } catch (Exception e) {
+            e.printStackTrace();
+            assertTrue(false);
+        }
+    }
+
+    @Test
+    @Order(12)
+    void testElementsToViewToDS() {
+        final DataStream<Person> people = people();
+
+        /* Create a view from a stream. */
+        final Table peopleTable = streamTableEnvironment.fromDataStream(people);
+        streamTableEnvironment.createTemporaryView("PeopleView", peopleTable);
+
+        /* Create a table using SQL to select records from a view. */
+        final Table resultTable =
+                streamTableEnvironment.sqlQuery(
+                        "SELECT givenName, middleName, surname, suffix,"
+                                + " TO_TIMESTAMP_LTZ(RAND()*985000000, 0) as birthdate,"
+                                + " CAST(0 AS INT) as age"
+                                + " FROM PeopleView WHERE UPPER(surname)='WILLMORE'");
+
+        /* Persist the selecting from the view to a data source. */
+        streamTableEnvironment
+                .toDataStream(resultTable)
+                .addSink(mariadbInsertWillmoresRows)
+                .setParallelism(1);
+
+        try {
+            streamExecutionEnvironment.execute();
+            assertTrue(true);
+        } catch (Exception e) {
+            e.printStackTrace();
+            assertTrue(false);
         }
     }
 }
