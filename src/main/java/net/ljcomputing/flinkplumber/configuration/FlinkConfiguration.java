@@ -26,19 +26,36 @@ import org.apache.flink.table.api.bridge.java.StreamTableEnvironment;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+/** Flink configurations */
 @Configuration
 public class FlinkConfiguration {
+    /**
+     * Streaming execution environment bean.
+     * 
+     * @return
+     */
     @Bean
     public StreamExecutionEnvironment streamingExecutionEnvironment() {
         return StreamExecutionEnvironment.getExecutionEnvironment();
     }
 
+    /**
+     * Streaming table environment.
+     * 
+     * @param streamExecutionEnvironment
+     * @return
+     */
     @Bean
     public StreamTableEnvironment streamTableEnvironment(
             StreamExecutionEnvironment streamExecutionEnvironment) {
         return StreamTableEnvironment.create(streamExecutionEnvironment);
     }
 
+    /**
+     * Flink JDBC execution options.
+     * 
+     * @return
+     */
     @Bean
     public JdbcExecutionOptions jdbcExecutionOptions() {
         return JdbcExecutionOptions.builder()

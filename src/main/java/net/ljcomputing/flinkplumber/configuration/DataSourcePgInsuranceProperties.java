@@ -25,9 +25,15 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+/** PostgreSQL database configuration options. */
 @Configuration
 @ConfigurationProperties(prefix = "application.datasource.pg.insurance")
 public class DataSourcePgInsuranceProperties extends DataSourcePropertiesBase {
+    /**
+     * PostgreSQL JDBC Connection options.
+     * 
+     * @return
+     */
     @Bean
     public JdbcConnectionOptions postgresConnectionOptions() {
         return new JdbcConnectionOptions.JdbcConnectionOptionsBuilder()

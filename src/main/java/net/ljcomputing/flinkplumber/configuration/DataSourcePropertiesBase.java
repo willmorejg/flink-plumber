@@ -22,6 +22,7 @@ package net.ljcomputing.flinkplumber.configuration;
 
 import lombok.Data;
 
+/** Base data source properties. */
 @Data
 public abstract class DataSourcePropertiesBase {
     protected String url;

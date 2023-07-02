@@ -25,9 +25,15 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+/** MariaDB Willmore database configuration options. */
 @Configuration
 @ConfigurationProperties(prefix = "application.datasource.mariadb.willmores")
 public class DataSourceMariaDBWillmoresProperties extends DataSourcePropertiesBase {
+    /**
+     * MariaDB JDBC Connection options.
+     * 
+     * @return
+     */
     @Bean
     public JdbcConnectionOptions mariadbConnectionOptions() {
         return new JdbcConnectionOptions.JdbcConnectionOptionsBuilder()
