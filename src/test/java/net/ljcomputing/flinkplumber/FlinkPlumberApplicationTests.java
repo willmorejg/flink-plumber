@@ -42,6 +42,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 
 @SpringBootTest
+@Order(1)
 @TestMethodOrder(OrderAnnotation.class)
 @ActiveProfiles("test")
 class FlinkPlumberApplicationTests {

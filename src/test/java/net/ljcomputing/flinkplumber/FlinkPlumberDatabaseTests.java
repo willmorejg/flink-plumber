@@ -40,6 +40,7 @@ import org.springframework.test.context.ActiveProfiles;
 
 @SpringBootTest
 @TestMethodOrder(OrderAnnotation.class)
+@Order(10)
 @ActiveProfiles("test")
 class FlinkPlumberDatabaseTests {
     @Autowired private StreamExecutionEnvironment streamExecutionEnvironment;
