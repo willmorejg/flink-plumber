@@ -20,21 +20,17 @@ James G Willmore - LJ Computing - (C) 2023
 */
 package net.ljcomputing.flinkplumber.filter;
 
-import lombok.extern.slf4j.Slf4j;
-import net.ljcomputing.flinkplumber.model.Person;
 import org.apache.flink.api.common.functions.FilterFunction;
 import org.springframework.stereotype.Component;
+import net.ljcomputing.flinkplumber.model.Person;
 
 @Component
-@Slf4j
 public class WillmoreFilter implements FilterFunction<Person> {
 
     @Override
     public boolean filter(Person value) throws Exception {
-        log.debug("value: {}", value);
         final String comparison =
                 value.getSurname() != null ? value.getSurname().toUpperCase() : "";
-        log.debug("returning: {}", "WILLMORE".equals(comparison));
         return "WILLMORE".equals(comparison);
     }
 }
