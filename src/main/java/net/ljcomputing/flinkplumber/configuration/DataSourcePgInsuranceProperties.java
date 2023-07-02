@@ -31,7 +31,7 @@ import org.springframework.context.annotation.Configuration;
 public class DataSourcePgInsuranceProperties extends DataSourcePropertiesBase {
     /**
      * PostgreSQL JDBC Connection options.
-     * 
+     *
      * @return
      */
     @Bean

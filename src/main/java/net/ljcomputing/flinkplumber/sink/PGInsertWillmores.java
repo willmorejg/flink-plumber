@@ -23,13 +23,13 @@ package net.ljcomputing.flinkplumber.sink;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
+import lombok.extern.slf4j.Slf4j;
+import net.ljcomputing.flinkplumber.model.Person;
 import org.apache.flink.configuration.Configuration;
 import org.apache.flink.connector.jdbc.JdbcConnectionOptions;
 import org.apache.flink.streaming.api.functions.sink.RichSinkFunction;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import lombok.extern.slf4j.Slf4j;
-import net.ljcomputing.flinkplumber.model.Person;
 
 /** Sink function to insert values into willmores table. */
 @Component

@@ -31,7 +31,7 @@ import org.springframework.context.annotation.Configuration;
 public class DataSourceMariaDBWillmoresProperties extends DataSourcePropertiesBase {
     /**
      * MariaDB JDBC Connection options.
-     * 
+     *
      * @return
      */
     @Bean

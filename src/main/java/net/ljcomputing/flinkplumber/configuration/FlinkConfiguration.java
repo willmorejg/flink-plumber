@@ -31,7 +31,7 @@ import org.springframework.context.annotation.Configuration;
 public class FlinkConfiguration {
     /**
      * Streaming execution environment bean.
-     * 
+     *
      * @return
      */
     @Bean
@@ -41,7 +41,7 @@ public class FlinkConfiguration {
 
     /**
      * Streaming table environment.
-     * 
+     *
      * @param streamExecutionEnvironment
      * @return
      */
@@ -53,7 +53,7 @@ public class FlinkConfiguration {
 
     /**
      * Flink JDBC execution options.
-     * 
+     *
      * @return
      */
     @Bean
