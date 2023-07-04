@@ -18,7 +18,7 @@ under the License.
 
 James G Willmore - LJ Computing - (C) 2023
 */
-package net.ljcomputing.flinkplumber.filter;
+package net.ljcomputing.flinkplumber.function;
 
 import java.util.Date;
 import net.ljcomputing.flinkplumber.model.Person;
