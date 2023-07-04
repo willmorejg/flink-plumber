@@ -28,27 +28,27 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-/** PostgreSQL database configuration options. */
+/** MS SQL Server database configuration options. */
 @Configuration
-@ConfigurationProperties(prefix = "application.datasource.pg.insurance")
-public class DataSourcePgInsuranceProperties extends DataSourcePropertiesBase {
+@ConfigurationProperties(prefix = "application.datasource.mssql.willmores")
+public class DataSourceMsSQLWillmoresProperties extends DataSourcePropertiesBase {
     /**
-     * PostgreSQL JDBC Connection options.
+     * MS SQL Server JDBC Connection options.
      *
      * @return
      */
     @Bean
-    public JdbcConnectionOptions postgresConnectionOptions() {
+    public JdbcConnectionOptions msSqlConnectionOptions() {
         return new JdbcConnectionOptions.JdbcConnectionOptionsBuilder()
                 .withUrl(url)
                 .withDriverName(driverName)
                 .withUsername(username)
-                // .withPassword(password)
+                .withPassword(password)
                 .build();
     }
 
     @Bean
-    public TableDescriptor pgInsurance() {
+    public TableDescriptor msSqlWillmores() {
         final Schema schema =
                 Schema.newBuilder()
                         .column("id", DataTypes.STRING())
