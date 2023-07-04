@@ -25,20 +25,20 @@ import org.apache.flink.api.common.functions.MapFunction;
 import org.apache.flink.types.Row;
 import org.springframework.stereotype.Component;
 
-/** Convert a Row into a Person POJO. */
+/** Convert a Person POJO into a Row. */
 @Component
-public class RowToPersonFunction implements MapFunction<Row, Person> {
+public class PersonToRowFunction implements MapFunction<Person, Row> {
 
     /** {@inheritDoc} */
     @Override
-    public Person map(final Row value) throws Exception {
-        final Person person = new Person();
+    public Row map(final Person value) throws Exception {
+        final Row row = Row.withNames();
 
-        person.setGivenName((String) value.getField("given_name"));
-        person.setMiddleName((String) value.getField("middle_name"));
-        person.setSurname((String) value.getField("surname"));
-        person.setSuffix((String) value.getField("suffix"));
+        row.setField("given_name", value.getGivenName());
+        row.setField("middle_name", value.getMiddleName());
+        row.setField("surname", value.getSurname());
+        row.setField("suffix", value.getSuffix());
 
-        return person;
+        return row;
     }
 }
