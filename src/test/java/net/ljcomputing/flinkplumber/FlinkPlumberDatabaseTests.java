@@ -30,9 +30,13 @@ import net.ljcomputing.flinkplumber.sink.MariaDBInsertWillmoresRows;
 import net.ljcomputing.flinkplumber.sink.PGInsertWillmores;
 import org.apache.flink.streaming.api.datastream.DataStream;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
+import org.apache.flink.table.api.Schema;
 import org.apache.flink.table.api.Table;
 import org.apache.flink.table.api.TableDescriptor;
+import org.apache.flink.table.api.TableResult;
 import org.apache.flink.table.api.bridge.java.StreamTableEnvironment;
+import org.apache.flink.table.catalog.ResolvedSchema;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.MethodOrderer.OrderAnnotation;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
@@ -115,6 +119,49 @@ class FlinkPlumberDatabaseTests {
             e.printStackTrace();
             assertTrue(false);
         }
+    }
+
+    /** Test read from table write to JSON. */
+    @Test
+    @Order(5)
+    void testWriteToJsonFile() {
+        streamTableEnvironment.createTemporaryTable("msSqlWillmores1", msSqlWillmores);
+        final Table table =
+                streamTableEnvironment.sqlQuery(
+                        "SELECT given_name, middle_name, surname, suffix FROM msSqlWillmores1");
+
+        final ResolvedSchema resolvedSchema = table.getResolvedSchema();
+        log.debug("schema: {}", resolvedSchema.toString());
+
+        final Schema.Builder schemaBuilder = Schema.newBuilder();
+        final Schema schema = schemaBuilder.fromResolvedSchema(resolvedSchema).build();
+
+        log.debug("schema: {}", schema.toString());
+
+        final TableDescriptor descriptor =
+                TableDescriptor.forConnector("filesystem")
+                        .option("format", "json")
+                        .option(
+                                "path",
+                                "file:///home/jim/eclipse-workspace/net.ljcomputing/flink-plumber/src/test/resources/out")
+                        .schema(schema)
+                        .build();
+
+        streamTableEnvironment.createTable("csvFile", descriptor);
+        final TableResult results =
+                streamTableEnvironment.executeSql(
+                        "INSERT INTO csvFile SELECT given_name, middle_name, surname, suffix FROM"
+                                + " msSqlWillmores1");
+
+        results.print();
+
+        // try {
+        //     streamExecutionEnvironment.execute();
+        //     assertTrue(true);
+        // } catch (Exception e) {
+        //     e.printStackTrace();
+        //     assertTrue(false);
+        // }
     }
 
     /** Test stream to 2 data source. */
