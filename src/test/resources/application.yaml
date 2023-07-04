@@ -12,3 +12,9 @@ application:
                 driver-name: org.mariadb.jdbc.Driver
                 username: jim
                 password: password
+        mssql:
+            willmores:
+                url: jdbc:sqlserver://;serverName=localhost;databaseName=willmores;encrypt=false;trustServerCertificate=true;user=sa;password=P@ssW0rd
+                driver-name: com.microsoft.sqlserver.jdbc.SQLServerDriver
+                username: sa
+                password: P@ssW0rd
