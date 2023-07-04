@@ -25,8 +25,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import net.ljcomputing.flinkplumber.configuration.DataSourceMariaDBWillmoresProperties;
 import net.ljcomputing.flinkplumber.configuration.DataSourcePgInsuranceProperties;
-import net.ljcomputing.flinkplumber.filter.AddBirthdateFunction;
 import net.ljcomputing.flinkplumber.filter.WillmoreFilter;
+import net.ljcomputing.flinkplumber.function.AddBirthdateFunction;
 import net.ljcomputing.flinkplumber.model.Person;
 import org.apache.flink.api.common.eventtime.WatermarkStrategy;
 import org.apache.flink.api.common.typeinfo.TypeInformation;
@@ -40,6 +40,7 @@ import org.apache.flink.streaming.api.datastream.DataStreamSource;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
 import org.apache.flink.table.api.Table;
 import org.apache.flink.table.api.bridge.java.StreamTableEnvironment;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.MethodOrderer.OrderAnnotation;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
@@ -120,7 +121,7 @@ class FlinkPlumberApplicationTests {
 
     /** Test of a function that sets a random birthdate and age to the data stream. */
     @Test
-    @Order(13)
+    @Order(20)
     void testMapFunction() {
         try {
             final DataStream<Person> people = people();
@@ -136,7 +137,7 @@ class FlinkPlumberApplicationTests {
     }
 
     @Test
-    @Order(14)
+    @Order(30)
     void test() {
         try {
             final Path inputFolder =
