@@ -22,18 +22,23 @@ package net.ljcomputing.flinkplumber;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import net.ljcomputing.flinkplumber.function.RowToPersonFunction;
 import net.ljcomputing.flinkplumber.model.Person;
+import net.ljcomputing.flinkplumber.sink.MSSQLInsertWillmores;
 import net.ljcomputing.flinkplumber.sink.MariaDBInsertWillmores;
 import net.ljcomputing.flinkplumber.sink.MariaDBInsertWillmoresRows;
 import net.ljcomputing.flinkplumber.sink.PGInsertWillmores;
 import org.apache.flink.streaming.api.datastream.DataStream;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
 import org.apache.flink.table.api.Table;
+import org.apache.flink.table.api.TableDescriptor;
 import org.apache.flink.table.api.bridge.java.StreamTableEnvironment;
 import org.junit.jupiter.api.MethodOrderer.OrderAnnotation;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
@@ -43,6 +48,8 @@ import org.springframework.test.context.ActiveProfiles;
 @Order(10)
 @ActiveProfiles("test")
 class FlinkPlumberDatabaseTests {
+    private static final Logger log = LoggerFactory.getLogger(FlinkPlumberDatabaseTests.class);
+
     @Autowired private StreamExecutionEnvironment streamExecutionEnvironment;
 
     @Autowired private StreamTableEnvironment streamTableEnvironment;
@@ -52,6 +59,14 @@ class FlinkPlumberDatabaseTests {
     @Autowired private MariaDBInsertWillmores mariadbInsertWillmores;
 
     @Autowired private MariaDBInsertWillmoresRows mariadbInsertWillmoresRows;
+
+    @Autowired private MSSQLInsertWillmores mssqlInsertWillmores;
+
+    @Autowired private RowToPersonFunction rowToPersonFunction;
+
+    @Autowired private TableDescriptor pgInsurance;
+
+    @Autowired private TableDescriptor msSqlWillmores;
 
     /**
      * People test data stream.
@@ -78,6 +93,33 @@ class FlinkPlumberDatabaseTests {
     /** Test stream to 2 data source. */
     @Test
     @Order(1)
+    void testPgInsurance() {
+        final DataStream<Person> people = people();
+        people.addSink(mssqlInsertWillmores).setParallelism(1);
+
+        streamTableEnvironment.createTemporaryTable("msSqlWillmores", msSqlWillmores);
+        final Table table =
+                streamTableEnvironment.sqlQuery(
+                        "SELECT given_name, middle_name, surname, suffix FROM msSqlWillmores");
+
+        streamTableEnvironment
+                .toDataStream(table)
+                .map(rowToPersonFunction)
+                .addSink(pgInsertWillmores)
+                .setParallelism(1);
+
+        try {
+            streamExecutionEnvironment.execute();
+            assertTrue(true);
+        } catch (Exception e) {
+            e.printStackTrace();
+            assertTrue(false);
+        }
+    }
+
+    /** Test stream to 2 data source. */
+    @Test
+    @Order(10)
     void testElementsToMariaDS() {
         final DataStream<Person> people = people();
 
@@ -96,7 +138,7 @@ class FlinkPlumberDatabaseTests {
 
     /** Test using a select statement to filter a view, which enriches the initial data stream. */
     @Test
-    @Order(2)
+    @Order(20)
     void testElementsToViewToDS() {
         final DataStream<Person> people = people();
 
@@ -110,7 +152,7 @@ class FlinkPlumberDatabaseTests {
                         "SELECT givenName, middleName, surname, suffix,"
                                 + " TO_TIMESTAMP_LTZ(RAND()*985000000, 0) as birthdate,"
                                 + " CAST(0 AS INT) as age"
-                                + " FROM PeopleView WHERE UPPER(surname)='WILLMORE'");
+                                + " FROM PeopleView2 WHERE UPPER(surname)='WILLMORE'");
 
         /* Persist the selecting from the view to a data source. */
         streamTableEnvironment
@@ -126,4 +168,19 @@ class FlinkPlumberDatabaseTests {
             assertTrue(false);
         }
     }
+
+    /** Test to retrieve data from database. */
+    // @Test
+    // @Order(2)
+    // void testDataFromDb() {
+    //     streamExecutionEnvironment.setParallelism(1).addSource(pgDataSourceFunction).print();
+
+    //     try {
+    //         streamExecutionEnvironment.execute();
+    //         assertTrue(true);
+    //     } catch (Exception e) {
+    //         e.printStackTrace();
+    //         assertTrue(false);
+    //     }
+    // }
 }
