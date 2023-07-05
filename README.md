@@ -88,11 +88,13 @@ A sample project using <a href="https://flink.apache.org/">Apache Flink</a>.
 <!-- GETTING STARTED -->
 ## Getting Started
 
-The unit tests use <a href="https://www.postgresql.org/">PostgreSQL</a> and <a href="https://mariadb.org/">MariaDB</a> data sources. DDL scripts are contained in the src/test/resources/sql directory.
+The unit tests use <a href="https://www.microsoft.com/en-us/sql-server">MS SQL Server</a>, <a href="https://www.postgresql.org/">PostgreSQL</a> and <a href="https://mariadb.org/">MariaDB</a> data sources. DDL scripts are contained in the src/test/resources/sql directory.
 
 ### Prerequisites
 
-The unit tests use <a href="https://www.postgresql.org/">PostgreSQL</a> and <a href="https://mariadb.org/">MariaDB</a> data sources, so both are needed to run the tests without modification of the code.
+The unit tests use <a href="https://www.microsoft.com/en-us/sql-server">MS SQL Server</a>, <a href="https://www.postgresql.org/">PostgreSQL</a> and <a href="https://mariadb.org/">MariaDB</a> data sources. The databases are needed to run the tests without modification of the code.
+
+<a href="https://www.docker.com/">Docker</a> was used to stand up the <a href="https://www.microsoft.com/en-us/sql-server">MS SQL Server</a> database instance used in the unot tests. The version used can be found <a href="https://hub.docker.com/_/microsoft-mssql-server">here</a>.
 
 ### Installation
 
