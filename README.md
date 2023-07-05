@@ -25,6 +25,7 @@
 [![Issues][issues-shield]][issues-url]
 [![MIT License][license-shield]][license-url]
 [![LinkedIn][linkedin-shield]][linkedin-url]
+[![SonarCloud][sonarcloud-shield]][sonarcloud-url]
 
 <h5>Created using <a href="https://github.com/othneildrew/Best-README-Template">Best-README-Template</a></h5>
 
@@ -199,3 +200,5 @@ Project Link: [https://github.com/willmorejg/flink-plumber](https://github.com/w
 [license-url]: https://github.com/willmorejg/flink-plumber/blob/master/LICENSE.txt
 [linkedin-shield]: https://img.shields.io/badge/-LinkedIn-black.svg?style=for-the-badge&logo=linkedin&colorB=555
 [linkedin-url]: https://linkedin.com/in/willmorejg
+[sonarcloud-shield]: https://sonarcloud.io/images/project_badges/sonarcloud-white.svg
+[sonarcloud-url]: https://sonarcloud.io/api/project_badges/measure?project=willmorejg_flink-plumber&metric=alert_status
