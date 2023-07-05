@@ -201,4 +201,4 @@ Project Link: [https://github.com/willmorejg/flink-plumber](https://github.com/w
 [linkedin-shield]: https://img.shields.io/badge/-LinkedIn-black.svg?style=for-the-badge&logo=linkedin&colorB=555
 [linkedin-url]: https://linkedin.com/in/willmorejg
 [sonarcloud-shield]: https://sonarcloud.io/images/project_badges/sonarcloud-white.svg
-[sonarcloud-url]: https://sonarcloud.io/api/project_badges/measure?project=willmorejg_flink-plumber&metric=alert_status
+[sonarcloud-url]: https://sonarcloud.io/summary/overall?id=willmorejg_flink-plumber
