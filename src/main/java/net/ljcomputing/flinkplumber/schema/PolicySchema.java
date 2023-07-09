@@ -24,14 +24,17 @@ import org.apache.flink.table.api.DataTypes;
 import org.apache.flink.table.api.Schema;
 import org.springframework.stereotype.Component;
 
+/** Policy schema. */
 @Component
 public class PolicySchema implements SchemaBean {
 
+    /** {@inheritDoc} */
     @Override
     public String getSchemaName() {
         return DefinedSchemas.POLICY.getName();
     }
 
+    /** {@inheritDoc} */
     @Override
     public Schema getSchema() {
         return Schema.newBuilder()

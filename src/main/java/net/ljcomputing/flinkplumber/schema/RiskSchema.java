@@ -24,14 +24,17 @@ import org.apache.flink.table.api.DataTypes;
 import org.apache.flink.table.api.Schema;
 import org.springframework.stereotype.Component;
 
+/** Risk schema. */
 @Component
 public class RiskSchema implements SchemaBean {
 
+    /** {@inheritDoc} */
     @Override
     public String getSchemaName() {
         return DefinedSchemas.RISK.getName();
     }
 
+    /** {@inheritDoc} */
     @Override
     public Schema getSchema() {
         return Schema.newBuilder()
