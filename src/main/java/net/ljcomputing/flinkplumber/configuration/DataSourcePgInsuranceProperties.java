@@ -20,6 +20,8 @@ James G Willmore - LJ Computing - (C) 2023
 */
 package net.ljcomputing.flinkplumber.configuration;
 
+import net.ljcomputing.flinkplumber.schema.DefinedSchemas;
+import net.ljcomputing.flinkplumber.schema.SchemaBeanFactory;
 import org.apache.flink.connector.jdbc.JdbcConnectionOptions;
 import org.apache.flink.table.api.DataTypes;
 import org.apache.flink.table.api.Schema;
@@ -62,6 +64,34 @@ public class DataSourcePgInsuranceProperties extends DataSourcePropertiesBase {
         final TableDescriptor descriptor =
                 TableDescriptor.forConnector("jdbc")
                         .option("table-name", "willmores")
+                        .option("url", url)
+                        .option("driver", driverName)
+                        .schema(schema)
+                        .build();
+        return descriptor;
+    }
+
+    @Bean
+    public TableDescriptor pgPolicy(final SchemaBeanFactory factory) {
+        final Schema schema = factory.locate(DefinedSchemas.POLICY);
+
+        final TableDescriptor descriptor =
+                TableDescriptor.forConnector("jdbc")
+                        .option("table-name", "policy")
+                        .option("url", url)
+                        .option("driver", driverName)
+                        .schema(schema)
+                        .build();
+        return descriptor;
+    }
+
+    @Bean
+    public TableDescriptor pgRisk(final SchemaBeanFactory factory) {
+        final Schema schema = factory.locate(DefinedSchemas.RISK);
+
+        final TableDescriptor descriptor =
+                TableDescriptor.forConnector("jdbc")
+                        .option("table-name", "risk")
                         .option("url", url)
                         .option("driver", driverName)
                         .schema(schema)
