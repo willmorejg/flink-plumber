@@ -20,29 +20,29 @@ James G Willmore - LJ Computing - (C) 2023
 */
 package net.ljcomputing.flinkplumber.schema;
 
-/** Application definined schemas. */
-public enum DefinedSchemas {
-    POLICY("policy"),
-    RISK("risk");
+import org.apache.flink.table.api.DataTypes;
+import org.apache.flink.table.api.Schema;
+import org.springframework.stereotype.Component;
 
-    /** The name of the schema. */
-    private String name;
+@Component
+public class RiskSchema implements SchemaBean {
 
-    /**
-     * Constructor.
-     *
-     * @param name
-     */
-    private DefinedSchemas(final String name) {
-        this.name = name;
+    @Override
+    public String getSchemaName() {
+        return DefinedSchemas.RISK.getName();
     }
 
-    /**
-     * The name associated with the schema.
-     *
-     * @return
-     */
-    public String getName() {
-        return name;
+    @Override
+    public Schema getSchema() {
+        return Schema.newBuilder()
+                .column("risk_id", DataTypes.INT())
+                .column("risk_uuid", DataTypes.STRING())
+                .column("policy_id", DataTypes.INT())
+                .column("parent_risk_id", DataTypes.INT())
+                .column("risk_type", DataTypes.STRING())
+                .column("description", DataTypes.STRING())
+                .column("created_at", DataTypes.TIMESTAMP(3))
+                .column("updated_at", DataTypes.TIMESTAMP(3))
+                .build();
     }
 }
