@@ -44,6 +44,7 @@ import org.junit.jupiter.api.MethodOrderer.OrderAnnotation;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -51,9 +52,10 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 
 @SpringBootTest
-@Order(1)
+@Order(10)
 @TestMethodOrder(OrderAnnotation.class)
 @ActiveProfiles("test")
+@ExtendWith({FlinkTestContainers.class})
 class FlinkPlumberApplicationTests {
     private static final Logger log = LoggerFactory.getLogger(FlinkPlumberApplicationTests.class);
 
@@ -95,6 +97,7 @@ class FlinkPlumberApplicationTests {
     @Test
     @Order(1)
     void contextLoads() {
+        log.info("containers started? : {}", FlinkTestContainers.containersStarted);
         assertNotNull(streamExecutionEnvironment);
         assertNotNull(streamTableEnvironment);
         assertNotNull(pgInsuranceProperties);
@@ -113,7 +116,7 @@ class FlinkPlumberApplicationTests {
             streamExecutionEnvironment.execute();
             assertTrue(true);
         } catch (final Exception e) {
-            e.printStackTrace();
+            log.error("ERROR: ", e);
             assertTrue(false);
         }
     }
@@ -130,7 +133,7 @@ class FlinkPlumberApplicationTests {
             streamExecutionEnvironment.execute();
             assertTrue(true);
         } catch (final Exception e) {
-            e.printStackTrace();
+            log.error("ERROR: ", e);
             assertTrue(false);
         }
     }
@@ -171,7 +174,7 @@ class FlinkPlumberApplicationTests {
             streamExecutionEnvironment.execute();
             assertTrue(true);
         } catch (final Exception e) {
-            e.printStackTrace();
+            log.error("ERROR: ", e);
             assertTrue(false);
         }
     }

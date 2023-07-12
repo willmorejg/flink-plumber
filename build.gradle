@@ -17,6 +17,7 @@ version = '0.0.1-SNAPSHOT'
 ext {
     flinkVersion = '1.17.1'
     scalaVersion = '_2.12'
+    testcontainersVersion = '1.18.3'
 }
 
 java {
@@ -70,6 +71,9 @@ dependencies {
 
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testImplementation "org.apache.flink:flink-test-utils:${flinkVersion}"
+    testImplementation "org.testcontainers:testcontainers:${testcontainersVersion}"
+    testImplementation "org.testcontainers:junit-jupiter:${testcontainersVersion}"
+    testImplementation "org.testcontainers:mssqlserver:${testcontainersVersion}"
 }
  
 tasks.withType(JavaCompile) {
