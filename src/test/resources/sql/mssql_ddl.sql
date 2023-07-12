@@ -1,9 +1,12 @@
+CREATE DATABASE willmores;
+USE willmores;
+
 -- willmores.dbo.willmores definition
 -- Drop table
 
  -- DROP TABLE willmores.dbo.willmores;
 
-CREATE TABLE willmores.dbo.willmores (
+CREATE TABLE willmores (
 	id bigint IDENTITY(1,
 1) PRIMARY KEY,
 	given_name varchar(256) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
@@ -15,14 +18,14 @@ CREATE TABLE willmores.dbo.willmores (
 );
 
 CREATE TRIGGER dbo.trgAfterUpdate ON
-willmores.dbo.willmores
+dbo.willmores
 AFTER
 INSERT
 	,
 	UPDATE
 	AS
   UPDATE
-	willmores.dbo.willmores
+	dbo.willmores
 SET
 	updated_at = GETDATE() AT TIME ZONE 'UTC' AT TIME ZONE 'US Eastern Standard Time'
 FROM
