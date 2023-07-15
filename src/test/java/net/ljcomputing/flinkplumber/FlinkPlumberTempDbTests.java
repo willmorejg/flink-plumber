@@ -44,7 +44,7 @@ import org.springframework.test.context.ActiveProfiles;
 
 @SpringBootTest
 @TestMethodOrder(OrderAnnotation.class)
-@Order(10)
+@Order(30)
 @ActiveProfiles("test")
 class FlinkPlumberTempDbTests {
     private static final Logger log = LoggerFactory.getLogger(FlinkPlumberDatabaseTests.class);
