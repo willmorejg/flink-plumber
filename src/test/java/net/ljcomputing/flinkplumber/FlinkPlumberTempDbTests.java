@@ -23,15 +23,9 @@ package net.ljcomputing.flinkplumber;
 import static org.junit.Assert.assertNotNull;
 
 import java.util.Date;
-import net.ljcomputing.flinkplumber.function.PersonToRowFunction;
-import net.ljcomputing.flinkplumber.function.RowToPersonFunction;
 import net.ljcomputing.flinkplumber.model.Person;
 import net.ljcomputing.flinkplumber.schema.DefinedSchemas;
 import net.ljcomputing.flinkplumber.schema.SchemaBeanFactory;
-import net.ljcomputing.flinkplumber.sink.MSSQLInsertWillmores;
-import net.ljcomputing.flinkplumber.sink.MariaDBInsertWillmores;
-import net.ljcomputing.flinkplumber.sink.MariaDBInsertWillmoresRows;
-import net.ljcomputing.flinkplumber.sink.PGInsertWillmores;
 import org.apache.flink.streaming.api.datastream.DataStream;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
 import org.apache.flink.table.api.DataTypes;
@@ -59,25 +53,9 @@ class FlinkPlumberTempDbTests {
 
     @Autowired private StreamTableEnvironment streamTableEnvironment;
 
-    @Autowired private PGInsertWillmores pgInsertWillmores;
-
-    @Autowired private MariaDBInsertWillmores mariadbInsertWillmores;
-
-    @Autowired private MariaDBInsertWillmoresRows mariadbInsertWillmoresRows;
-
-    @Autowired private MSSQLInsertWillmores mssqlInsertWillmores;
-
-    @Autowired private RowToPersonFunction rowToPersonFunction;
-
-    @Autowired private PersonToRowFunction personToRowFunction;
-
-    @Autowired private TableDescriptor pgInsurance;
-
     @Autowired private TableDescriptor pgPolicy;
 
     @Autowired private TableDescriptor pgRisk;
-
-    @Autowired private TableDescriptor msSqlWillmores;
 
     @Autowired private TableDescriptor datagenPeopleTableDescriptor;
 
