@@ -33,7 +33,7 @@ import org.springframework.stereotype.Component;
 @Slf4j
 public class SchemaBeanFactory {
     /** A Map of schemas. */
-    final Map<String, SchemaBean> schemas = new HashMap<>();
+    private final Map<String, SchemaBean> schemas = new HashMap<>();
 
     /**
      * Constructor. Initialization of the Map of schemas.
