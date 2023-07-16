@@ -20,29 +20,26 @@ James G Willmore - LJ Computing - (C) 2023
 */
 package net.ljcomputing.flinkplumber.tabledescriptor;
 
-/** Application defined table descriptions. */
-public enum DefinedTableDescriptors {
-    POSTGRES("pg"),
-    CSV("csv");
+import org.apache.flink.table.api.FormatDescriptor;
+import org.apache.flink.table.api.Schema;
+import org.apache.flink.table.api.TableDescriptor;
+import org.springframework.stereotype.Component;
 
-    /** The name of the defined table description. */
-    private String name;
-
-    /**
-     * Constructor.
-     *
-     * @param name
-     */
-    private DefinedTableDescriptors(final String name) {
-        this.name = name;
+@Component
+public class CSVTableDescriptor implements TableDescriptorBean {
+    @Override
+    public String getTableDescriptorName() {
+        return DefinedTableDescriptors.CSV.getName();
     }
 
-    /**
-     * The name associated with the table description.
-     *
-     * @return
-     */
-    public String getName() {
-        return name;
+    @Override
+    public TableDescriptor getTableDescriptor(final Schema schema, final String tablename) {
+        final String path = System.getProperty("user.dir") + "/src/test/resources/out/csv";
+        System.out.println("PATH: " + path);
+        return TableDescriptor.forConnector("filesystem")
+                .schema(schema)
+                .option("path", path)
+                .format(FormatDescriptor.forFormat("csv").build())
+                .build();
     }
 }

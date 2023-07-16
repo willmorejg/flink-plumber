@@ -67,8 +67,6 @@ class FlinkPlumberDatabaseTests {
 
     @Autowired private RowToPersonFunction rowToPersonFunction;
 
-    @Autowired private TableDescriptor pgInsurance;
-
     @Autowired private TableDescriptor msSqlWillmores;
 
     /**
@@ -214,19 +212,4 @@ class FlinkPlumberDatabaseTests {
             assertTrue(false);
         }
     }
-
-    /** Test to retrieve data from database. */
-    // @Test
-    // @Order(2)
-    // void testDataFromDb() {
-    //     streamExecutionEnvironment.setParallelism(1).addSource(pgDataSourceFunction).print();
-
-    //     try {
-    //         streamExecutionEnvironment.execute();
-    //         assertTrue(true);
-    //     } catch (Exception e) {
-    //         e.printStackTrace();
-    //         assertTrue(false);
-    //     }
-    // }
 }

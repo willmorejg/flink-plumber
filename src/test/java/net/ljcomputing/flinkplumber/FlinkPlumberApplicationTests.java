@@ -175,16 +175,4 @@ class FlinkPlumberApplicationTests {
             assertTrue(false);
         }
     }
-
-    // @Test
-    // @Order(13)
-    // void test() {
-    //     try {
-    //         streamExecutionEnvironment.execute();
-    //         assertTrue(true);
-    //     } catch (Exception e) {
-    //         e.printStackTrace();
-    //         assertTrue(false);
-    //     }
-    // }
 }

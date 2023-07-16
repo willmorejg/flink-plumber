@@ -113,9 +113,7 @@ class FlinkPlumberTempDbTests {
     @Order(10)
     void testSelectDb() {
         streamTableEnvironment.createTemporaryTable("pgPolicy", pgPolicy);
-        // streamTableEnvironment.executeSql("SELECT * FROM pgPolicy").print();
         streamTableEnvironment.createTemporaryTable("pgRisk", pgRisk);
-        // streamTableEnvironment.executeSql("SELECT * FROM pgRisk").print();
 
         final Schema avroSchema =
                 Schema.newBuilder()
@@ -154,19 +152,4 @@ class FlinkPlumberTempDbTests {
         streamTableEnvironment.executeSql("SELECT * FROM avroRisk").print();
         streamTableEnvironment.dropTemporaryTable("avroRisk");
     }
-
-    /** Test to retrieve data from database. */
-    // @Test
-    // @Order(2)
-    // void testDataFromDb() {
-    //     streamExecutionEnvironment.setParallelism(1).addSource(pgDataSourceFunction).print();
-
-    //     try {
-    //         streamExecutionEnvironment.execute();
-    //         assertTrue(true);
-    //     } catch (Exception e) {
-    //         e.printStackTrace();
-    //         assertTrue(false);
-    //     }
-    // }
 }

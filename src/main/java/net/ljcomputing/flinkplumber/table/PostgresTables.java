@@ -18,31 +18,20 @@ under the License.
 
 James G Willmore - LJ Computing - (C) 2023
 */
-package net.ljcomputing.flinkplumber.tabledescriptor;
+package net.ljcomputing.flinkplumber.table;
 
-/** Application defined table descriptions. */
-public enum DefinedTableDescriptors {
-    POSTGRES("pg"),
-    CSV("csv");
+import net.ljcomputing.flinkplumber.schema.DefinedSchemas;
+import net.ljcomputing.flinkplumber.tabledescriptor.AbstractTableDescriptor;
+import net.ljcomputing.flinkplumber.tabledescriptor.DefinedTableDescriptors;
+import org.apache.flink.table.api.Schema;
+import org.apache.flink.table.api.TableDescriptor;
+import org.springframework.stereotype.Component;
 
-    /** The name of the defined table description. */
-    private String name;
-
-    /**
-     * Constructor.
-     *
-     * @param name
-     */
-    private DefinedTableDescriptors(final String name) {
-        this.name = name;
-    }
-
-    /**
-     * The name associated with the table description.
-     *
-     * @return
-     */
-    public String getName() {
-        return name;
+@Component
+public class PostgresTables extends AbstractTableDescriptor {
+    public TableDescriptor policy() {
+        final String tablename = DefinedSchemas.POLICY.getName();
+        final Schema schema = schemaFactory.locate(DefinedSchemas.POLICY);
+        return tableDescriptorFactory.locate(DefinedTableDescriptors.POSTGRES, schema, tablename);
     }
 }

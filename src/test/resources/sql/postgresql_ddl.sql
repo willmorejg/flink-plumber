@@ -21,6 +21,28 @@ update
     on
     public.willmores for each row execute function trigger_set_timestamp();
 
+-- public.fullnames definition
+
+-- Drop table
+
+-- DROP TABLE fullnames;
+
+CREATE TABLE fullnames (
+	id serial4 NOT NULL,
+	fullname varchar NOT NULL,
+	created_at timestamp NULL DEFAULT now(),
+	modified_at timestamp NULL DEFAULT now(),
+	CONSTRAINT fullnames_pk PRIMARY KEY (id)
+);
+CREATE INDEX fullnames_fullname_idx ON fullnames USING btree (fullname);
+
+-- Table Triggers
+
+create trigger fullnames_mod_trg after
+insert
+    on
+    public.fullnames for each row execute function trigger_set_timestamp();
+
 -- public."policy" definition
 
 -- Drop table

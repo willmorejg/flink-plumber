@@ -20,29 +20,10 @@ James G Willmore - LJ Computing - (C) 2023
 */
 package net.ljcomputing.flinkplumber.tabledescriptor;
 
-/** Application defined table descriptions. */
-public enum DefinedTableDescriptors {
-    POSTGRES("pg"),
-    CSV("csv");
+import net.ljcomputing.flinkplumber.schema.SchemaBeanFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 
-    /** The name of the defined table description. */
-    private String name;
-
-    /**
-     * Constructor.
-     *
-     * @param name
-     */
-    private DefinedTableDescriptors(final String name) {
-        this.name = name;
-    }
-
-    /**
-     * The name associated with the table description.
-     *
-     * @return
-     */
-    public String getName() {
-        return name;
-    }
+public abstract class AbstractTableDescriptor {
+    @Autowired protected SchemaBeanFactory schemaFactory;
+    @Autowired protected TableDescriptorBeanFactory tableDescriptorFactory;
 }

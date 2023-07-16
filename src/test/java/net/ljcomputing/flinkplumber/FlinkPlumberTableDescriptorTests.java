@@ -24,8 +24,12 @@ import static org.junit.Assert.assertNotNull;
 
 import net.ljcomputing.flinkplumber.schema.DefinedSchemas;
 import net.ljcomputing.flinkplumber.schema.SchemaBeanFactory;
+import net.ljcomputing.flinkplumber.table.CsvTables;
+import net.ljcomputing.flinkplumber.table.PostgresTables;
 import net.ljcomputing.flinkplumber.tabledescriptor.DefinedTableDescriptors;
 import net.ljcomputing.flinkplumber.tabledescriptor.TableDescriptorBeanFactory;
+import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
+import org.apache.flink.table.api.bridge.java.StreamTableEnvironment;
 import org.junit.jupiter.api.MethodOrderer.OrderAnnotation;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
@@ -43,13 +47,21 @@ import org.springframework.test.context.ActiveProfiles;
 class FlinkPlumberTableDescriptorTests {
     private static final Logger log = LoggerFactory.getLogger(FlinkPlumberDatabaseTests.class);
 
+    @Autowired private StreamExecutionEnvironment streamExecutionEnvironment;
+
+    @Autowired private StreamTableEnvironment streamTableEnvironment;
+
     @Autowired private SchemaBeanFactory schemaFactory;
 
     @Autowired private TableDescriptorBeanFactory tableDescriptorFactory;
 
+    @Autowired private PostgresTables postgresTables;
+
+    @Autowired private CsvTables csvTables;
+
     /** Test factory. */
     @Test
-    @Order(5)
+    @Order(1)
     void testFactory() {
         assertNotNull(schemaFactory.locate(DefinedSchemas.POLICY));
         assertNotNull(schemaFactory.locate(DefinedSchemas.RISK));
@@ -58,20 +70,21 @@ class FlinkPlumberTableDescriptorTests {
                         DefinedTableDescriptors.POSTGRES,
                         schemaFactory.locate(DefinedSchemas.POLICY),
                         DefinedSchemas.POLICY.getName()));
+        assertNotNull(postgresTables);
+        assertNotNull(postgresTables.policy());
     }
 
-    /** Test to retrieve data from database. */
-    // @Test
-    // @Order(2)
-    // void testDataFromDb() {
-    //     streamExecutionEnvironment.setParallelism(1).addSource(pgDataSourceFunction).print();
+    /** Test using table descriptor. */
+    @Test
+    @Order(1)
+    void testTableDescriptor() {
+        final String pgPolicy = DefinedTableDescriptors.POSTGRES + DefinedSchemas.POLICY.getName();
+        final String csvPolicy = DefinedTableDescriptors.CSV + DefinedSchemas.POLICY.getName();
 
-    //     try {
-    //         streamExecutionEnvironment.execute();
-    //         assertTrue(true);
-    //     } catch (Exception e) {
-    //         e.printStackTrace();
-    //         assertTrue(false);
-    //     }
-    // }
+        streamTableEnvironment.createTable(pgPolicy, postgresTables.policy());
+        streamTableEnvironment.createTable(csvPolicy, csvTables.policy());
+        streamTableEnvironment.executeSql(
+                "INSERT INTO " + csvPolicy + " SELECT * FROM " + pgPolicy);
+        streamTableEnvironment.executeSql("SELECT * FROM " + csvPolicy).print();
+    }
 }
