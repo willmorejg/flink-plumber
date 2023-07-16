@@ -76,7 +76,7 @@ class FlinkPlumberTableDescriptorTests {
 
     /** Test using table descriptor. */
     @Test
-    @Order(1)
+    @Order(10)
     void testTableDescriptor() {
         final String pgPolicy = DefinedTableDescriptors.POSTGRES + DefinedSchemas.POLICY.getName();
         final String csvPolicy = DefinedTableDescriptors.CSV + DefinedSchemas.POLICY.getName();
