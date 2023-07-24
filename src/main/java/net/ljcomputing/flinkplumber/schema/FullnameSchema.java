@@ -20,31 +20,23 @@ James G Willmore - LJ Computing - (C) 2023
 */
 package net.ljcomputing.flinkplumber.schema;
 
-/** Application definined schemas. */
-public enum DefinedSchemas {
-    FULLNAME("fullname"),
-    WILLMORES("willmores"),
-    POLICY("policy"),
-    RISK("risk");
+import org.apache.flink.table.api.DataTypes;
+import org.apache.flink.table.api.Schema;
+import org.springframework.stereotype.Component;
 
-    /** The name of the schema. */
-    private String name;
+/** Fullname schema. */
+@Component
+public class FullnameSchema implements SchemaBean {
 
-    /**
-     * Constructor.
-     *
-     * @param name
-     */
-    private DefinedSchemas(final String name) {
-        this.name = name;
+    /** {@inheritDoc} */
+    @Override
+    public String getSchemaName() {
+        return DefinedSchemas.FULLNAME.getName();
     }
 
-    /**
-     * The name associated with the schema.
-     *
-     * @return
-     */
-    public String getName() {
-        return name;
+    /** {@inheritDoc} */
+    @Override
+    public Schema getSchema() {
+        return Schema.newBuilder().column("fullname", DataTypes.STRING()).build();
     }
 }

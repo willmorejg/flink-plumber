@@ -27,11 +27,28 @@ import org.apache.flink.table.api.Schema;
 import org.apache.flink.table.api.TableDescriptor;
 import org.springframework.stereotype.Component;
 
+/** Pre-determined PostgreSQL Table Descriptors. */
 @Component
 public class PostgresTables extends AbstractTableDescriptor {
+    /**
+     * Policy Table Descriptor.
+     * 
+     * @return
+     */
     public TableDescriptor policy() {
         final String tablename = DefinedSchemas.POLICY.getName();
         final Schema schema = schemaFactory.locate(DefinedSchemas.POLICY);
+        return tableDescriptorFactory.locate(DefinedTableDescriptors.POSTGRES, schema, tablename);
+    }
+
+    /**
+     * "willmores" Table Descriptor.
+     * 
+     * @return
+     */
+    public TableDescriptor willmores() {
+        final String tablename = DefinedSchemas.WILLMORES.getName();
+        final Schema schema = schemaFactory.locate(DefinedSchemas.WILLMORES);
         return tableDescriptorFactory.locate(DefinedTableDescriptors.POSTGRES, schema, tablename);
     }
 }

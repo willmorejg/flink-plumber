@@ -27,11 +27,28 @@ import org.apache.flink.table.api.Schema;
 import org.apache.flink.table.api.TableDescriptor;
 import org.springframework.stereotype.Component;
 
+/** Pre-determined CSV Table Descriptors. */
 @Component
 public class CsvTables extends AbstractTableDescriptor {
+    /**
+     * Policy Table Descriptor.
+     * 
+     * @return
+     */
     public TableDescriptor policy() {
         final String tablename = DefinedSchemas.POLICY.getName();
         final Schema schema = schemaFactory.locate(DefinedSchemas.POLICY);
+        return tableDescriptorFactory.locate(DefinedTableDescriptors.CSV, schema, tablename);
+    }
+
+    /**
+     * Full name Table Descriptor.
+     * 
+     * @return
+     */
+    public TableDescriptor fullname() {
+        final String tablename = DefinedSchemas.FULLNAME.getName();
+        final Schema schema = schemaFactory.locate(DefinedSchemas.FULLNAME);
         return tableDescriptorFactory.locate(DefinedTableDescriptors.CSV, schema, tablename);
     }
 }
